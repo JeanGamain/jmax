@@ -1,0 +1,10 @@
+draw all non-water blocks.
+
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+glDepthMask(GL_FALSE);
+glEnable(GL_DEPTH_TEST);
+
+draw water blocks.
+
+glDepthMask(GL_TRUE);//allow depth buffer writing. 
