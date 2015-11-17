@@ -5,8 +5,8 @@
 
 
 int main(int argc, char *argv[]) {
-	jmax	*engine;
-	engine = new jmax(800, 600);
+	jmax::jmax	*engine;
+	engine = new jmax::jmax(800, 600);
 
 	return 0;
 }

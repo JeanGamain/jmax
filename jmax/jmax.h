@@ -19,23 +19,25 @@
 # define	DEFAULT_FOV 90.0
 # define	JMAX_FONT NULL
 
-class jmax
+namespace jmax
 {
-public:
-	jmax(unsigned int width, unsigned int height);
-	virtual ~jmax();
+	class jmax
+	{
+	public:
+		jmax(unsigned int width, unsigned int height);
+		virtual ~jmax();
 
-	void		render();
-	void		mainLoop();
+		void		render();
+		void		mainLoop();
 
-	// Static
-	static void	drawText(int x, int y, void *font, char *str);
+		// Static
+		static void	drawText(int x, int y, void *font, char *str);
 
-public:
-	viewPort			camera;
-	GLFWwindow			*window;
-	bind				binding;
-};
-
+	public:
+		viewPort			camera;
+		GLFWwindow			*window;
+		jmax::bind				binding;
+	};
+}
 
 #endif /* !JMAX_H_ */

@@ -5,21 +5,24 @@
 #include "material.h"
 #include "mesh.h"
 
-class model
+namespace jmax
 {
-public:
-	model();
-	virtual ~model();
+	class model
+	{
+	public:
+		model();
+		virtual ~model();
 
-public:
-	void				render();
+	public:
+		void				render();
 
-	mesh				mesh;
-	std::list<material>	material;
+		mesh				mesh;
+		std::list<material>	material;
 
-	double				position[3];
-	double				rotation[3];
-	double				scale[3];
-};
+		double				position[3];
+		double				rotation[3];
+		double				scale[3];
+	};
+}
 
 #endif /* !MODEL_H_ */

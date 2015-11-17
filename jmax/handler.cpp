@@ -6,11 +6,11 @@
 #include "jmax.h"
 #include "bind.h"
 
-extern jmax	*engine;
+extern jmax::jmax	*engine;
 
 void hKeyPress(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	std::map<int, bind::bindValue>::iterator val = engine->binding.binding.find(key);
+	std::map<int, jmax::bind::bindValue>::iterator val = engine->binding.binding.find(key);
 
 	if (val != engine->binding.binding.end())
 	{
@@ -18,7 +18,7 @@ void hKeyPress(GLFWwindow *window, int key, int scancode, int action, int mods)
 		if (val->second.value == GLFW_RELEASE && action == GLFW_PRESS)
 			val->second.status = !val->second.status;
 		val->second.value = action;
-		(static_cast<bind::bindFunct>(val->second.funct))(unsigned int(glfwGetTime() * 1000000), &engine->binding, &val->second);
+		(static_cast<jmax::bind::bindFunct>(val->second.funct))(unsigned int(glfwGetTime() * 1000000), &engine->binding, &val->second);
 	}
 }
 
@@ -27,7 +27,7 @@ void hResize(GLFWwindow *window, int w, int h)
 	if (h == 0)
 		h = 1;
 	glfwGetFramebufferSize(window, &w, &h);
-	engine->camera = viewPort(engine->camera.fov, w, h, engine->camera.frustum[5]);
+	engine->camera = jmax::viewPort(engine->camera.fov, w, h, engine->camera.frustum[5]);
 	glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, w, h);
 }
@@ -37,7 +37,7 @@ void hRefresh(GLFWwindow *window)
 	engine->render();
 }
 
-void hKey_Z(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_Z(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -52,7 +52,7 @@ void hKey_Z(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_S(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_S(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -67,7 +67,7 @@ void hKey_S(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_D(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_D(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -82,7 +82,7 @@ void hKey_D(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_Q(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_Q(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -97,7 +97,7 @@ void hKey_Q(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_UP(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_UP(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -108,7 +108,7 @@ void hKey_UP(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_DOWN(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_DOWN(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -119,7 +119,7 @@ void hKey_DOWN(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_LEFT(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_LEFT(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -130,7 +130,7 @@ void hKey_LEFT(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_RIGHT(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_RIGHT(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -141,7 +141,7 @@ void hKey_RIGHT(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_0(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_0(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 	if (my->value == GLFW_RELEASE)
 		my->active = 0;
@@ -152,27 +152,27 @@ void hKey_0(unsigned int tick, bind *binding, bind::bindValue *my)
 	}
 }
 
-void hKey_1(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_1(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 
 }
 
-void hKey_2(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_2(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 
 }
 
-void hKey_3(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_3(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 
 }
 
-void hKey_4(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_4(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 
 }
 
-void hKey_5(unsigned int tick, bind *binding, bind::bindValue *my)
+void hKey_5(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 {
 
 }
