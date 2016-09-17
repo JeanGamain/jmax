@@ -1,12 +1,8 @@
 #include <stdio.h>
-#include "jmax.h"
+#include "jmax.hpp"
 
-
-
-
-int main(int argc, char *argv[]) {
-	jmax::jmax	*engine;
-	engine = new jmax::jmax(800, 600);
+int main(/*int argc, char *argv[]*/) {
+	jmax::engine	test(800, 600);
 
 	return 0;
 }

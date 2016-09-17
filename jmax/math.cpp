@@ -1,19 +1,19 @@
-#define _USE_MATH_DEFINES
-#include <cmath>
-#include "math.h"
+#include "math.hpp"
 
 namespace jmax
 {
 	namespace math
 	{
-		inline float dot(vec3 v, vec3 p)
+
+
+		inline double dot(vec3 v, vec3 p)
 		{
-			return (v[0] * p[0] + v[1] * p[1] + v[2] * p[2]);
+			return (v.x * p.x + v.y * p.y + v.z * p.z);
 		}
 
 		double		veclenght(vec3 a, vec3 b)
 		{
-			return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2) + pow(a[2] - b[2], 2));
+			return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2));
 		}
 
 		double		norme(vec3 a)
@@ -21,7 +21,7 @@ namespace jmax
 			return (sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]));
 		}
 
-		void		rotate(vec3 vec, vec3 angle)
+		void		rotate(vec3 & vec, vec3 angle)
 		{
 			vec3	radangle = { RAD(angle[0]), RAD(angle[1]), RAD(angle[2]) };
 			vec3	tmpsin = { sin(radangle[0]), sin(radangle[1]), sin(radangle[2]) };
@@ -29,7 +29,7 @@ namespace jmax
 			rotate_cordinate(vec, tmpsin, tmpcos);
 		}
 
-		void		rotate_cordinate(vec3 var, vec3 tmpsin, vec3 tmpcos)
+		void		rotate_cordinate(vec3 & var, vec3 tmpsin, vec3 tmpcos)
 		{
 			double	save[3];
 

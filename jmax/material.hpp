@@ -1,5 +1,7 @@
-#ifndef MATERIAL_H_
-# define MATERIAL_H_
+#ifndef MATERIAL_HPP_
+# define MATERIAL_HPP_
+
+#include <list>
 
 namespace jmax
 {
@@ -9,20 +11,14 @@ namespace jmax
 		material();
 		virtual ~material();
 
+		void	setup() const;
+
 	public:
 		typedef union	u_color
 		{
 			unsigned int	integer;
 			unsigned char	tab[4];
 		}				color;
-
-		typedef struct
-		{
-			idx3d		start;
-			idx3d		count;
-		}				meshAssoc;
-
-		std::list<meshAssoc>	assoc;
 
 		unsigned char	transparency;
 		unsigned char	reflexion;
@@ -37,4 +33,4 @@ namespace jmax
 	};
 }
 
-#endif /* !MATERIAL_H_ */
+#endif /* !MATERIAL_HPP_ */

@@ -1,5 +1,5 @@
-#ifndef BIND_H_
-# define BIND_H_
+#ifndef BIND_HPP_
+# define BIND_HPP_
 
 # include <map>
 # include <list>
@@ -46,4 +46,4 @@ namespace jmax
 	};
 }
 
-#endif /* !BIND_H_ */
+#endif /* !BIND_HPP_ */

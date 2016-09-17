@@ -1,7 +1,8 @@
 #ifndef MESH_H_
 # define MESH_H_
 
-#include "math.h"
+#include "math.hpp"
+#include "material.hpp"
 
 namespace jmax
 {
@@ -14,20 +15,14 @@ namespace jmax
 		void	alloc();
 	public:
 		typedef struct
-		{
-			idx3d	vertex;
-			idx3d	normal;
-			idx3d	textureCord;
-		}			vtxInfo;
+		{				
+			vec3	pos;
+			vec3	normal;
+			vec2	texture;
+		}			vertex;
 
-		idx3d	nbVertex; // short" later
-		vec3	*vertex;
-		idx3d	nbNormal;
-		vec3	*normal;
-		idx3d	nbTextureCord;
-		vec2	*textureCord;
-		idx3d	nbPrimitive;
-		vtxInfo	*primitive;
+		idx3d		nbPrimitive; // nbPrimitive = nbVertex / 3 short" later
+		vertex *	primitive;
 	};
 }
 

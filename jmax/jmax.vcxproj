@@ -56,8 +56,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;GLFW.lib;SOIL.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\library\SOIL\lib;$(SolutionDir)\library\glew\lib;$(SolutionDir)\library\GLFW\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GLFW.lib;SOIL.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\library\SOIL\lib;$(SolutionDir)\library\GLFW\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -69,38 +69,36 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32.lib;GLFW.lib;SOIL.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GLFW.lib;SOIL.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\library\SOIL\lib;$(SolutionDir)\library\glew\lib;$(SolutionDir)\library\GLFW\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bind.h" />
-    <ClInclude Include="fps.h" />
-    <ClInclude Include="handler.h" />
-    <ClInclude Include="jmax.h" />
-    <ClInclude Include="load.h" />
-    <ClInclude Include="material.h" />
-    <ClInclude Include="math.h" />
-    <ClInclude Include="mesh.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="viewPort.h" />
+    <ClInclude Include="bind.hpp" />
+    <ClInclude Include="handler.hpp" />
+    <ClInclude Include="engine.hpp" />
+    <ClInclude Include="jmax.hpp" />
+    <ClInclude Include="load.hpp" />
+    <ClInclude Include="material.hpp" />
+    <ClInclude Include="math.hpp" />
+    <ClInclude Include="model.hpp" />
+    <ClInclude Include="vec2.hpp" />
+    <ClInclude Include="vec3.hpp" />
+    <ClInclude Include="camera.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bind.cpp" />
-    <ClCompile Include="fps.cpp" />
     <ClCompile Include="handler.cpp" />
-    <ClCompile Include="jmax.cpp" />
+    <ClCompile Include="engine.cpp" />
     <ClCompile Include="load.cpp" />
     <ClCompile Include="loadMtlFile.cpp" />
     <ClCompile Include="loadObjFile.cpp" />
     <ClCompile Include="loadOffFile.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="material.cpp" />
-    <ClCompile Include="math.cpp" />
-    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
-    <ClCompile Include="viewPort.cpp" />
+    <ClCompile Include="camera.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

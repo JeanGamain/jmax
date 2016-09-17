@@ -1,0 +1,45 @@
+#ifndef MODEL_HPP_
+# define MODEL_HPP_
+
+#include <list>
+#include <map>
+#include "material.hpp"
+#include "math.hpp"
+
+namespace jmax
+{
+	class model
+	{
+	public:
+	  model();
+	  virtual ~model();
+
+	public:
+	  void		render();
+	  void		setModelview();
+	  
+	  struct materialAssoc
+	  {
+	    idx3d		startIndex;
+	    jmax::material *	material;
+	  };
+	  
+	  struct mesh
+	  {
+	    vec3	vertex;
+	    vec3	normal;
+	    vec2	texture;
+	  };
+	  
+	  //std::list<meshGroup>	tree;
+	  std::list<mesh>				_mesh;
+	  std::map<std::string, material>		_material;
+	  std::list<materialAssoc>			_renderMap;
+	  
+	  vec3				position;
+	  vec3				rotation;
+	  vec3				scale;
+	};
+}
+
+#endif /* !MODEL_HPP_ */

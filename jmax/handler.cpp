@@ -1,24 +1,20 @@
 #include <iostream>
-#include <glm.hpp>
-#include <mat4x4.hpp>
-#include <gtx/transform.hpp>
-#include <gtx/rotate_vector.hpp>
-#include "jmax.h"
-#include "bind.h"
+#include "bind.hpp"
+#include "math.hpp"
+#include "engine.hpp"
 
-extern jmax::jmax	*engine;
+extern jmax::engine	*myRender;
 
 void hKeyPress(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	std::map<int, jmax::bind::bindValue>::iterator val = engine->binding.binding.find(key);
+	std::map<int, jmax::bind::bindValue>::iterator val = myRender->binding->binding.find(key);
 
-	if (val != engine->binding.binding.end())
+	if (val != myRender->binding->binding.end())
 	{
-		//std::cout << key << "-" << action << std::endl;
 		if (val->second.value == GLFW_RELEASE && action == GLFW_PRESS)
 			val->second.status = !val->second.status;
 		val->second.value = action;
-		(static_cast<jmax::bind::bindFunct>(val->second.funct))(unsigned int(glfwGetTime() * 1000000), &engine->binding, &val->second);
+		(reinterpret_cast<jmax::bind::bindFunct>(val->second.funct))((unsigned int)(glfwGetTime() * 1000000), myRender->binding, &val->second);
 	}
 }
 
@@ -27,14 +23,14 @@ void hResize(GLFWwindow *window, int w, int h)
 	if (h == 0)
 		h = 1;
 	glfwGetFramebufferSize(window, &w, &h);
-	engine->camera = jmax::viewPort(engine->camera.fov, w, h, engine->camera.frustum[5]);
+	myRender->view.resize(w, h);
 	glMatrixMode(GL_MODELVIEW);
 	glViewport(0, 0, w, h);
 }
 
 void hRefresh(GLFWwindow *window)
 {
-	engine->render();
+	myRender->render();
 }
 
 void hKey_Z(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
@@ -44,11 +40,12 @@ void hKey_Z(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else if ((*binding)[GLFW_KEY_S].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		vec3 bra = {0.0, 0.0, 0.01};
-		//rotate(bra, engine->camera.rotation);
-		engine->camera.position[0] += bra[0];
-		engine->camera.position[1] += bra[1];
-		engine->camera.position[2] += bra[2];
+		vec3 bra = { 0.0, 0.0, 0.0000003 * tick };
+		bra.rotateByCache(myRender->view.tmpsin, myRender->view.tmpcos);
+
+		myRender->view.position[0] += bra.x;
+		myRender->view.position[1] += bra.y;
+		myRender->view.position[2] += bra.z;
 	}
 }
 
@@ -59,11 +56,11 @@ void hKey_S(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else if ((*binding)[GLFW_KEY_Z].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		vec3 bra = {0.0, 0.0, -0.01};
-		//rotate(bra, engine->camera.rotation);
-		engine->camera.position[0] += bra[0];
-		engine->camera.position[1] += bra[1];
-		engine->camera.position[2] += bra[2];
+		vec3 bra = { 0.0, 0.0, -0.0000003 * tick };
+		bra.rotateByCache(myRender->view.tmpsin, myRender->view.tmpcos);
+		myRender->view.position[0] += bra.x;
+		myRender->view.position[1] += bra.y;
+		myRender->view.position[2] += bra.z;
 	}
 }
 
@@ -74,11 +71,11 @@ void hKey_D(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else if ((*binding)[GLFW_KEY_Q].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		vec3 bra = {0.01, 0.0, 0.0};
-		//rotate(bra, engine->camera.rotation);
-		engine->camera.position[0] += bra[0];
-		engine->camera.position[1] += bra[1];
-		engine->camera.position[2] += bra[2];
+		vec3 bra = { -0.0000003 * tick, 0.0, 0.0 };
+		bra.rotateByCache(myRender->view.tmpsin, myRender->view.tmpcos);
+		myRender->view.position[0] += bra.x;
+		myRender->view.position[1] += bra.y;
+		myRender->view.position[2] += bra.z;
 	}
 }
 
@@ -89,11 +86,11 @@ void hKey_Q(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else if ((*binding)[GLFW_KEY_S].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		vec3 bra = {-0.01, 0.0, 0.0};
-		//rotate(bra, engine->camera.rotation);
-		engine->camera.position[0] += bra[0];
-		engine->camera.position[1] += bra[1];
-		engine->camera.position[2] += bra[2];
+		vec3 bra = { 0.0000003 * tick, 0.0, 0.0 };
+		bra.rotateByCache(myRender->view.tmpsin, myRender->view.tmpcos);
+		myRender->view.position[0] += bra.x;
+		myRender->view.position[1] += bra.y;
+		myRender->view.position[2] += bra.z;
 	}
 }
 
@@ -104,7 +101,9 @@ void hKey_UP(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else if ((*binding)[GLFW_KEY_DOWN].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		engine->camera.rotation[0] = CIRCULAR(engine->camera.rotation[0], 360.0, 2, 1);
+		myRender->view.rotation.x = CIRCULAR_ADD(myRender->view.rotation.x, 360.0, 2);
+		myRender->view.tmpcos.x = cos(RAD(myRender->view.rotation.x));
+		myRender->view.tmpsin.x = sin(RAD(myRender->view.rotation.x));
 	}
 }
 
@@ -115,7 +114,9 @@ void hKey_DOWN(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my
 	else if ((*binding)[GLFW_KEY_UP].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		engine->camera.rotation[0] = CIRCULAR(engine->camera.rotation[0], 360.0, 2, 0);
+		myRender->view.rotation.x = CIRCULAR_SUB(myRender->view.rotation.x, 360.0, 2);
+		myRender->view.tmpcos.x = cos(RAD(myRender->view.rotation.x));
+		myRender->view.tmpsin.x = sin(RAD(myRender->view.rotation.x));
 	}
 }
 
@@ -126,7 +127,9 @@ void hKey_LEFT(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my
 	else if ((*binding)[GLFW_KEY_RIGHT].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		engine->camera.rotation[1] = CIRCULAR(engine->camera.rotation[1], 360.0, 2, 1);
+		myRender->view.rotation.y = CIRCULAR_ADD(myRender->view.rotation.y, 360.0, 2);
+		myRender->view.tmpcos.y = cos(RAD(myRender->view.rotation.y));
+		myRender->view.tmpsin.y = sin(RAD(myRender->view.rotation.y));
 	}
 }
 
@@ -137,7 +140,9 @@ void hKey_RIGHT(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *m
 	else if ((*binding)[GLFW_KEY_LEFT].value == GLFW_RELEASE)
 	{
 		my->active = 1;
-		engine->camera.rotation[1] = CIRCULAR(engine->camera.rotation[1], 360.0, 2, 0);
+		myRender->view.rotation.y = CIRCULAR_SUB(myRender->view.rotation.y, 360.0, 2);
+		myRender->view.tmpcos.y = cos(RAD(myRender->view.rotation.y));
+		myRender->view.tmpsin.y = sin(RAD(myRender->view.rotation.y));
 	}
 }
 
@@ -148,7 +153,7 @@ void hKey_0(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my)
 	else
 	{
 		my->active = 1;
-		engine->camera.rotation[1] = CIRCULAR(engine->camera.rotation[1], 360.0, 2, 0);
+
 	}
 }
 

@@ -1,150 +1,165 @@
 #include <fstream>
+#include <vector>
 #include <iostream>
-#include "load.h"
+#include <string>
+#include <cstring>
+#include "load.hpp"
 
 namespace jmax
 {
-	model *		jmax::load::ObjFile(std::string const & path)
+	model *		jmax::load::ObjFile(std::string const & path, std::string const & filename)
 	{
-		typedef std::map<std::string, std::pair<void(*)(), void(*)()>> optionKeys;
-
-		std::ifstream file(path);
+		std::ifstream file(path + filename);
 		if (!file.is_open())
 		{
-			std::cerr << "Unable to open file \"" << path << "\"" << std::endl;
+			std::cerr << "Unable to open file \"" << path << filename << "\"" << std::endl;
 			file.close();
 			return NULL;
 		}
 
 		std::string		line;
-		model *			model = new jmax::model;
-		unsigned int	counter[6] = { 0 };
+		model *			newModel = new model;
+		std::vector<vec3>	vertex;
+		std::vector<vec3>	normal;
+		std::vector<vec2>	textureCord;
 
-		const optionKeys handler =
+		optionKeys handler =
 		{
-			{ "v", { // vertex
-				[&model]()
-				{ model->mesh.nbVertex++; },
-				[&line, &model, &counter]()
+			{ "v", // vertex
+			[](std::string line, std::vector<vec3> & vertex, std::vector<vec2> &, std::vector<vec3> &, model *, std::string const &)
+			{
+				vec3 tmp;
+				nblistd(line, reinterpret_cast<double *>(&tmp), 3);
+				vertex.push_back(tmp);
+				/*
+				p = 0;
+				while (p < 3)
 				{
-					nblistd(line, reinterpret_cast<double *>(model->mesh.vertex[counter[0]++]), 3);
-					/*
-					p = 0;
-					while (p < 3)
-					{
-						if (obj->bound.box[p * 2])
-						{
-							obj->bound.box[p * 2] = 0;
-							obj->bound.origin[p * 2] = vtx[p];
-							obj->bound.origin[p * 2 + 1] = vtx[p];
-						}
-						else if (vtx[p] < obj->bound.origin[p * 2])
-							obj->bound.origin[p * 2] = vtx[p];
-						else if (vtx[p] > obj->bound.origin[p * 2 + 1])
-							obj->bound.origin[p * 2 + 1] = vtx[p];
-						p++;
-					}*/
-					counter[0]++;
+				if (obj->bound.box[p * 2])
+				{
+				obj->bound.box[p * 2] = 0;
+				obj->bound.origin[p * 2] = vtx[p];
+				obj->bound.origin[p * 2 + 1] = vtx[p];
+				}
+				else if (vtx[p] < obj->bound.origin[p * 2])
+				obj->bound.origin[p * 2] = vtx[p];
+				else if (vtx[p] > obj->bound.origin[p * 2 + 1])
+				obj->bound.origin[p * 2 + 1] = vtx[p];
+				p++;
+				}*/
+			}
+			},
+			{ "vt", // texture
+			[](std::string line, std::vector<vec3> &, std::vector<vec2> & textureCord, std::vector<vec3> &, model *, std::string const &)
+			{
+				vec2 tmp;
+				nblistd(line, reinterpret_cast<double *>(&tmp), 2);
+				textureCord.push_back(tmp);
+			}
+			},
+			{ "vn", // normal
+			[](std::string line, std::vector<vec3> &, std::vector<vec2> &, std::vector<vec3> &normal, model *, std::string const &)
+			{
+				vec3 tmp;
+				nblistd(line, reinterpret_cast<double *>(&tmp), 3);
+				normal.push_back(tmp);
+			}
+			},
+			{ "f", // primitive
+			[](std::string line, std::vector<vec3> & vertex, std::vector<vec2> &textureCord, std::vector<vec3> &normal, model * newModel, std::string const &)
+			{
+				if (strwordcount(line.c_str()) < 3)
+					return;
+				std::vector<model::mesh> primitive;
+				model::mesh		newMesh;
+				unsigned char	nbpoly = strwordcount(line.c_str());
+				char *			tmp = const_cast<char*>(line.c_str());
+				unsigned int	vtn[3];
 
-				}
-			} },
-			{ "vt", { // texture
-				[&model]()
-				{ model->mesh.nbTextureCord++; },
-				[&line, &model, &counter]()
+				for (unsigned int p = 0; *tmp != '\0' && p < nbpoly; p++)
 				{
-					nblistd(line, model->mesh.textureCord[counter[1]++], 2);
-				}
-			} },
-			{ "vn", { // normal
-				[&model]()
-				{ model->mesh.nbNormal++; },
-				[&line, &model, &counter]()
-				{
-					nblistd(line, model->mesh.textureCord[counter[2]++], 3);
-				}
-			} },
-			{ "f", { // primitive
-				[&line, &model]()
-				{
-					if (strwordcount(line.c_str()) == 3)
-						model->mesh.nbPrimitive++;
-				},
-				[&line, &model, &counter]()
-				{
-					if (strwordcount(line.c_str()) != 3)
-						return;
-					unsigned char nbpoly = strwordcount(line.c_str());
-					unsigned int p = 0;
-					char *tmp = const_cast<char*>(line.c_str());
-					while (*tmp != '\0' && p < nbpoly)
+				  tmp = const_cast<char*>(trim(TRIM_D, tmp).c_str());
+					vtn[0] = static_cast<unsigned int>(strtod(tmp, &tmp));
+					if (vtn[0] > 0 && --vtn[0] < vertex.size())
+						memcpy(&newMesh.vertex, &vertex[vtn[0]], sizeof(vec3));
+					if (*tmp++ == '/')
 					{
-						model->mesh.primitive[counter[6] + p].vertex =
-							(unsigned int)strtod(tmp, &tmp);
-						if (*tmp == '/')
+						vtn[1] = static_cast<unsigned int>(strtod(tmp, &tmp));
+						if (vtn[1] > 0 && --vtn[1] < vertex.size())
+							memcpy(&newMesh.texture, &textureCord[vtn[1]], sizeof(vec2));
+						if (*tmp++ == '/')
 						{
-							model->mesh.primitive[counter[6] + p].textureCord =
-								(unsigned int)strtod(1 + tmp, &tmp);
-							if (*tmp == '/')
-								model->mesh.primitive[counter[6] + p].normal =
-								(unsigned int)strtod(1 + tmp, &tmp);
+							vtn[2] = static_cast<unsigned int>(strtod(tmp, &tmp));
+							if (vtn[2] > 0 && --vtn[2] < vertex.size())
+								memcpy(&newMesh.normal, &normal[vtn[2]], sizeof(vec3));
 						}
-						p++;
 					}
-					counter[6] += nbpoly; // !
-					counter[3]++; // !
+					primitive.push_back(newMesh);
 				}
-			} },
-			{ "usemtl", {
-				NULL,
-				[&line, &model, &counter]()
+				if (primitive.size() == 3)
+					newModel->_mesh.insert(newModel->_mesh.end(), primitive.begin(), primitive.end());
+				else
 				{
-					if (p == obj->nbMaterial)
-						
-					else
-						obj->RenderIndex[counter[4]].material = &obj->Material[p];
-					counter[4]++;
+					std::vector<model::mesh>::const_iterator end = primitive.end() - 2;
+					std::vector<model::mesh>::const_iterator lastVertex = primitive.end() - 1;
+					for (std::vector<model::mesh>::const_iterator i = primitive.begin(); i != end;)
+					{
+						newModel->_mesh.push_back(*i);
+						newModel->_mesh.push_back(*(++i));
+						newModel->_mesh.push_back(*lastVertex);
+					}
 				}
-			} },
-			{ "mtllib", {
-				NULL,
-				[&line, &model, &counter, &path]()
+			}
+			},
+			{ "usemtl",
+			[](std::string line, std::vector<vec3> &, std::vector<vec2> &, std::vector<vec3> &, model * newModel, std::string const &)
+			{
+				std::map<std::string, material>::iterator i = newModel->_material.find(line);
+				if (i == newModel->_material.end())
 				{
-					size_t	i;
-					if ((i = path.find_last_of('/')) != std::string::npos)
-						line = path.substr(0, i) + "/" + line;
-					model->material.push_back(MtlFile(line));
+					std::cerr << "Missing material " << line << std::endl;
+					return;
 				}
-			} }
+				newModel->_renderMap.push_back(model::materialAssoc{ newModel->_mesh.size(), &(i->second) });
+			}
+			},
+			{ "mtllib",
+			[](std::string line, std::vector<vec3> &, std::vector<vec2> &, std::vector<vec3> &, model * newModel, std::string const & path)
+			{
+			  const std::string filename = line;
+				std::map<std::string, material> *newMaterial = MtlFile(path, filename);
+				newModel->_material.insert(newMaterial->begin(), newMaterial->end());
+				delete newMaterial;
+			}
+			}
 		};
-
+		/*
 		while (std::getline(file, line))
 		{
 			line = trim(TRIM_D, line);
-			optionKeys::const_iterator i;
+			optionKeys::const_iterator j;
 			size_t e;
 			if ((e = line.find_first_of(' ')) != std::string::npos &&
-				(i = handler.find(line.substr(0, e))) != handler.end())
-			{
-				line = trim(TRIM_D, line.substr(e));
-				(*i).second.first();
-			}
+				(j = handler.find(line.substr(0, e))) != handler.end())
+				counter[std::distance(handler.begin(), j)]++;
 		}
+
 		file.clear();
 		file.seekg(0, std::ios::beg);
-		model->mesh.alloc();
+		*/
+
 		while (std::getline(file, line))
 		{
-			line = trim(TRIM_D, line);
-			optionKeys::const_iterator i;
-			size_t e;
-			if ((e = line.find_first_of(' ')) != std::string::npos &&
-				(i = handler.find(line.substr(0, e))) != handler.end())
-			{
-				line = trim(TRIM_D, line.substr(e));
-				(*i).second.second();
-			}
+		  line = trim(TRIM_D, line);
+		  optionKeys::const_iterator i;
+		  size_t e;
+		  if ((e = line.find_first_of(' ')) != std::string::npos &&
+		      (i = handler.find(line.substr(0, e))) != handler.end())
+		    {
+		      line = trim(TRIM_D, line.substr(e));
+		      i->second(line, vertex, textureCord, normal, newModel, path);
+		    }
 		}
-		return model;
+		return newModel;
 	}
 }

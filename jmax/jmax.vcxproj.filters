@@ -15,44 +15,41 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fps.h">
+    <ClInclude Include="engine.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="jmax.h">
+    <ClInclude Include="jmax.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="load.h">
+    <ClInclude Include="vec3.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="material.h">
+    <ClInclude Include="vec2.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="math.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="viewPort.h">
+    <ClInclude Include="camera.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="bind.h">
+    <ClInclude Include="model.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="handler.h">
+    <ClInclude Include="material.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
+    <ClInclude Include="load.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="math.h">
+    <ClInclude Include="handler.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="bind.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="fps.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="jmax.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="load.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -71,13 +68,7 @@
     <ClCompile Include="material.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="mesh.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="model.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="viewPort.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="bind.cpp">
@@ -86,7 +77,10 @@
     <ClCompile Include="handler.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="math.cpp">
+    <ClCompile Include="engine.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

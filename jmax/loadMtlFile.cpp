@@ -2,45 +2,47 @@
 #include <iostream>
 #include <functional>
 #include <map>
-#include "material.h"
-#include "load.h"
+#include "material.hpp"
+#include "load.hpp"
 
 namespace jmax
 {
-	std::map<std::string, material> *	jmax::load::MtlFile(std::string const & path)
+	std::map<std::string, material> *	jmax::load::MtlFile(std::string const & path, std::string const & filename)
 	{
-		std::ifstream file(path);
+		std::ifstream file(path + filename);
 		if (!file.is_open())
 		{
-			std::cerr << "Unable to open mtl file \"" << path << "\"" << std::endl;
+			std::cerr << "Unable to open mtl file \"" << path << filename << "\"" << std::endl;
 			file.close();
 			return NULL;
 		}
 		std::string		line;
-		std::string		param;
+		std::string		argv;
 		material		nowhere;
 		material		*mtl = &nowhere;
-		std::string::size_type i;
+		std::string::size_type spaceIndex;
 		std::map<std::string, material> *result = new std::map<std::string, material>;
-		const std::map<std::string, std::function<void()> > funct =
+		std::map<std::string, std::function<void()>>::const_iterator i;
+		const std::map<std::string, std::function<void ()>> funct =
 		{
-			{ "newmtl", [&]() { mtl = &(result[0][param]); } },
-			{ "Ka", [&]() { mtl->ambient = getColor(param); } },
-			{ "Kd", [&]() { mtl->diffuse = getColor(param); } },
-			{ "Ks", [&]() { mtl->specular = getColor(param); } },
-			{ "map_Ka", [&]() { mtl->map_Ka = load::Texture(param); } },
-			{ "map_Kd", [&]() { mtl->map_Kd = load::Texture(param); } },
-			{ "map_Ks", [&]() { mtl->map_Ks = load::Texture(param); } }
+			{ "newmtl", [&]() { mtl = &(result[0][argv]); } },
+			{ "Ka",		[&]() { mtl->ambient = getColor(argv); } },
+			{ "Kd",		[&]() { mtl->diffuse = getColor(argv); } },
+			{ "Ks",		[&]() { mtl->specular = getColor(argv); } },
+			{ "map_Ka", [&]() { mtl->map_Ka = load::Texture(path + argv); } },
+			{ "map_Kd", [&]() { mtl->map_Kd = load::Texture(path + argv); } },
+			{ "map_Ks", [&]() { mtl->map_Ks = load::Texture(path + argv); } }
 		};
 
 		while (std::getline(file, line))
 		{
 			line = trim(TRIM_D, line);
-			i = line.find(' '); /* ! */
-			line = line.substr(0, i - 1);
-			param = line.substr(i);
-			if (funct.find(line) != funct.end())
-				funct.find(line)->second(); /* ! find() x2 -> tmp iterator*/
+			if ((spaceIndex = line.find(' ')) == std::string::npos)
+				continue;
+			argv = line.substr(spaceIndex + 1);
+			line = line.substr(0, spaceIndex);
+			if ((i = funct.find(line)) != funct.end())
+				i->second();
 		}
 		file.close();
 		return result;

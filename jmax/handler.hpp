@@ -1,7 +1,7 @@
-#ifndef HANDLER_H_
-# define HANDLER_H_
+#ifndef HANDLER_HPP_
+# define HANDLER_HPP_
 
-#include "bind.h"
+#include "bind.hpp"
 
 void hKey_Z(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my);
 void hKey_S(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my);
@@ -18,9 +18,9 @@ void hKey_3(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my);
 void hKey_4(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my);
 void hKey_5(unsigned int tick, jmax::bind *binding, jmax::bind::bindValue *my);
 
-#include <GL/glfw3.h>
+#include <GLFW/glfw3.h>
 void hKeyPress(GLFWwindow *window, int key, int scancode, int action, int mods);
 void hResize(GLFWwindow *window, int w, int h);
 void hRefresh(GLFWwindow *window);
 
-#endif /* HANDLER_H_ */
+#endif /* HANDLER_HPP_ */
