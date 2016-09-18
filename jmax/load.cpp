@@ -4,14 +4,47 @@
 #include <string>
 #include <cstring>
 #include <GL/glew.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <algorithm>
 #include "load.hpp"
 #include "material.hpp"
 
 namespace jmax
 {
   
+  std::string		load::findCorectFileName(std::string const & path) {
+    DIR *		dir;
+    struct dirent *	fileName;
+    std::string		dirPath;
+    std::string		originalFileName;
+    std::string		testFileName;
+    
+    const size_t last_slash_idx = path.find_last_of("/\\");
+    if (std::string::npos != last_slash_idx) {
+      dirPath = path.substr(0, last_slash_idx);
+      originalFileName = path.substr(last_slash_idx + 1);
+    } else {
+      dirPath = ".";
+      originalFileName = path;
+    }
+    transform(originalFileName.begin(), originalFileName.end(), originalFileName.begin(), ::tolower);
+    dir = opendir(dirPath.c_str());
+    while ((fileName = readdir(dir)))
+      {
+	if (fileName->d_type != DT_REG)
+	  continue;
+	testFileName = fileName->d_name;
+	transform(testFileName.begin(), testFileName.end(), testFileName.begin(), ::tolower);
+	if (testFileName == originalFileName)
+	  return dirPath + '/' + fileName->d_name;
+      }
+    return path;
+  }
+
   unsigned int	load::Texture(std::string const & path)
   {
+    std::cout << "texture:" << path.c_str() << std::endl;
     unsigned int texture =
       SOIL_load_OGL_texture(path.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID,
 			    SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB |
@@ -66,7 +99,7 @@ namespace jmax
     return NULL;
   }
   
-  std::string		load::trim(char* charset, std::string str)
+  std::string			 load::trim(char* charset, std::string str)
   {
     int i;
     
@@ -78,7 +111,7 @@ namespace jmax
     while (strchr(charset, str[i]) != NULL)
       i--;
     i++;
-    return (str.substr(0, i));
+    return const_cast<char *>(str.substr(0, i).c_str());
   }
   
   material::color		load::getColor(std::string line)

@@ -18,23 +18,25 @@
 
 namespace jmax
 {
-	class engine
-	{
-	public:
-		engine(unsigned int width, unsigned int height);
-		virtual ~engine();
+  class engine
+  {
+  public:
+    engine(unsigned int width, unsigned int height, char * modelPath);
+    virtual ~engine();
+    
+    void		render();
+    void		mainLoop();
+    
+    // Static
+    //static void	drawText(int x, int y, void *font, char *str);
 
-		void		render();
-		void		mainLoop();
-
-		// Static
-		static void	drawText(int x, int y, void *font, char *str);
-
-	public:
-		camera			view;
-		GLFWwindow *		window;
-		jmax::bind *		binding;
-	};
+  public:
+    
+    model *			modelFile;
+    camera			view;
+    GLFWwindow *		window;
+    jmax::bind *		binding;
+  };
 }
 
 #endif /* !JMAX_HPP_ */

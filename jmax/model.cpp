@@ -17,13 +17,13 @@ namespace jmax
 
 	void	model::render()
 	{
-		const double color[3][3] =
+	  /*		const double color[3][3] =
 		{
 			{ 1.0f, 0.0f, 0.0f },
 			{ 0.0f, 1.0f, 0.0f },
 			{ 0.0f, 0.0f, 1.0f }
 		};
-		
+	  */
 		glPushMatrix();
 		setModelview();
 		glBegin(GL_TRIANGLES);

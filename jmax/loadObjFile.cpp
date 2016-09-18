@@ -68,47 +68,61 @@ namespace jmax
 			{ "f", // primitive
 			[](std::string line, std::vector<vec3> & vertex, std::vector<vec2> &textureCord, std::vector<vec3> &normal, model * newModel, std::string const &)
 			{
-				if (strwordcount(line.c_str()) < 3)
-					return;
-				std::vector<model::mesh> primitive;
-				model::mesh		newMesh;
-				unsigned char	nbpoly = strwordcount(line.c_str());
-				char *			tmp = const_cast<char*>(line.c_str());
-				unsigned int	vtn[3];
+			  //if (strwordcount(line.c_str()) < 3)
+			  //  return;
+			  std::vector<model::mesh> primitive;
+			  model::mesh		newMesh;
+			  unsigned char	nbpoly = strwordcount(line.c_str());
+			  std::string			tmp = line;
+			  char *			tmp2;
+			  unsigned int	vtn[3];
 
-				for (unsigned int p = 0; *tmp != '\0' && p < nbpoly; p++)
+			  for (unsigned int p = 0; tmp[0] != '\0' && p < nbpoly; p++)
+			    {
+			      tmp = load::trim(TRIM_D, tmp);
+			      vtn[0] = static_cast<unsigned int>(strtod(tmp.c_str(), &tmp2));
+			      if (tmp2 == tmp.c_str())
+				break;
+			      tmp = tmp2;
+			      if (vtn[0] > 0 && --vtn[0] < vertex.size())
+				memcpy(&newMesh.vertex, &vertex[vtn[0]], sizeof(vec3));
+			      if (tmp[0] != '\0' && tmp[0] == '/')
 				{
-				  tmp = const_cast<char*>(trim(TRIM_D, tmp).c_str());
-					vtn[0] = static_cast<unsigned int>(strtod(tmp, &tmp));
-					if (vtn[0] > 0 && --vtn[0] < vertex.size())
-						memcpy(&newMesh.vertex, &vertex[vtn[0]], sizeof(vec3));
-					if (*tmp++ == '/')
-					{
-						vtn[1] = static_cast<unsigned int>(strtod(tmp, &tmp));
-						if (vtn[1] > 0 && --vtn[1] < vertex.size())
-							memcpy(&newMesh.texture, &textureCord[vtn[1]], sizeof(vec2));
-						if (*tmp++ == '/')
-						{
-							vtn[2] = static_cast<unsigned int>(strtod(tmp, &tmp));
-							if (vtn[2] > 0 && --vtn[2] < vertex.size())
-								memcpy(&newMesh.normal, &normal[vtn[2]], sizeof(vec3));
-						}
-					}
-					primitive.push_back(newMesh);
+				  tmp = tmp.substr(1);
+				  vtn[1] = static_cast<unsigned int>(strtod(tmp.c_str(), &tmp2));
+				  if (tmp2 == tmp.c_str())
+				    break;
+				  tmp = tmp2;
+				  if (vtn[1] > 0 && --vtn[1] < vertex.size())
+				    memcpy(&newMesh.texture, &textureCord[vtn[1]], sizeof(vec2));
+				  if (tmp[0] != '\0' && tmp[0] == '/')
+				    {
+				      tmp = tmp.substr(1);
+				      vtn[2] = static_cast<unsigned int>(strtod(tmp.c_str(), &tmp2));
+				      if (tmp2 == tmp.c_str())
+					break;
+				      tmp = tmp2;
+				      if (vtn[2] > 0 && --vtn[2] < vertex.size())
+					memcpy(&newMesh.normal, &normal[vtn[2]], sizeof(vec3));
+				    }
 				}
-				if (primitive.size() == 3)
-					newModel->_mesh.insert(newModel->_mesh.end(), primitive.begin(), primitive.end());
-				else
+			      primitive.push_back(newMesh);
+			    }
+			  if (primitive.size() == 3)
+			    newModel->_mesh.insert(newModel->_mesh.end(), primitive.begin(), primitive.end());
+			  else if (primitive.size() > 3)
+			    {
+			      std::vector<model::mesh>::const_iterator end = primitive.end() - 2;
+			      std::vector<model::mesh>::const_iterator lastVertex = primitive.end() - 1;
+			      for (std::vector<model::mesh>::const_iterator i = primitive.begin(); i != end;)
 				{
-					std::vector<model::mesh>::const_iterator end = primitive.end() - 2;
-					std::vector<model::mesh>::const_iterator lastVertex = primitive.end() - 1;
-					for (std::vector<model::mesh>::const_iterator i = primitive.begin(); i != end;)
-					{
-						newModel->_mesh.push_back(*i);
-						newModel->_mesh.push_back(*(++i));
-						newModel->_mesh.push_back(*lastVertex);
-					}
+				  newModel->_mesh.push_back(*i);
+				  newModel->_mesh.push_back(*(++i));
+				  newModel->_mesh.push_back(*lastVertex);
 				}
+			    }
+			  else
+			    std::cerr << "Error: unsuported primitive (" << primitive.size() << " vertex)" << std::endl;
 			}
 			},
 			{ "usemtl",
@@ -120,7 +134,7 @@ namespace jmax
 					std::cerr << "Missing material " << line << std::endl;
 					return;
 				}
-				newModel->_renderMap.push_back(model::materialAssoc{ newModel->_mesh.size(), &(i->second) });
+				newModel->_renderMap.push_back(model::materialAssoc{ (unsigned int)newModel->_mesh.size(), &(i->second) });
 			}
 			},
 			{ "mtllib",
@@ -133,20 +147,6 @@ namespace jmax
 			}
 			}
 		};
-		/*
-		while (std::getline(file, line))
-		{
-			line = trim(TRIM_D, line);
-			optionKeys::const_iterator j;
-			size_t e;
-			if ((e = line.find_first_of(' ')) != std::string::npos &&
-				(j = handler.find(line.substr(0, e))) != handler.end())
-				counter[std::distance(handler.begin(), j)]++;
-		}
-
-		file.clear();
-		file.seekg(0, std::ios::beg);
-		*/
 
 		while (std::getline(file, line))
 		{

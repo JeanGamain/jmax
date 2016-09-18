@@ -14,15 +14,14 @@ namespace jmax
     //static model *bra = load::Model("Z:/Save/tek3/3d/ak47/ak47.obj");
     //static model *bra = load::Model("Z:/Save/tek3/3d/lego/LEGO_Man.obj");
 
-    static model *bra = load::Model("/media/jean/1ECC85FCCC85CF09/epitech/gamain_j/3d/lego/LEGO_Man.obj");
-    
+    //static model *bra = load::Model("/media/jean/1ECC85FCCC85CF09/epitech/gamain_j/3d/lego/lego.obj");
+   
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     view.setModelview();
-    if (bra != NULL)
-      bra->render();
+    if (modelFile != NULL)
+      modelFile->render();
     glPopAttrib();
-    //jmax::drawText(2, 2, JMAX_FONT, fpsCounter.getFps());
-    
+
     glfwSwapBuffers(window);
     glfwPollEvents();
     binding->runActive();
@@ -38,12 +37,8 @@ namespace jmax
       render();
   }
   
-  void engine::drawText(int, int, void *, char *str)
-  {
-    std::cout << "FPS: " << str << std::endl;
-  }
-  
-  engine::engine(unsigned int width, unsigned int height)
+  engine::engine(unsigned int width, unsigned int height, char * modelPath)
+    : modelFile(NULL)
   {
     std::map<int, jmax::bind::bindValue> b;
     b.insert(std::pair<int, jmax::bind::bindValue>(GLFW_KEY_W, jmax::bind::bindValue((void*)&hKey_Z)));
@@ -94,6 +89,7 @@ namespace jmax
     glClearDepth(DEFAULT_FAR);
     view = camera(DEFAULT_FOV, width, height, DEFAULT_FAR);
     view.setProjection();
+    modelFile = jmax::load::Model(modelPath);
     mainLoop();
   }
   

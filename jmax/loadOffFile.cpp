@@ -15,7 +15,7 @@ namespace jmax
 			return NULL;
 		}
 		std::string	line;
-		if (!std::getline(file, line) || trim(TRIM_D, line).c_str() != "OFF" || !std::getline(file, line))
+		if (!std::getline(file, line) || trim(TRIM_D, line) != "OFF" || !std::getline(file, line))
 		{
 			std::cerr << "Invalid .off file header \"" << path << "\"" << std::endl;
 			file.close();
