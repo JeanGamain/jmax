@@ -4,7 +4,7 @@ project(jmax)
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   # Update if necessary
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -O3 -ftree-vectorize -mmmx -m64 -mfpmath=sse+387 -funsafe-math-optimizations")
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

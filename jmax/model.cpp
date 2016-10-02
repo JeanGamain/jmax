@@ -17,43 +17,39 @@ namespace jmax
 
 	void	model::render()
 	{
-	  /*		const double color[3][3] =
-		{
-			{ 1.0f, 0.0f, 0.0f },
-			{ 0.0f, 1.0f, 0.0f },
-			{ 0.0f, 0.0f, 1.0f }
-		};
-	  */
-		glPushMatrix();
-		setModelview();
-		glBegin(GL_TRIANGLES);
-		std::list<materialAssoc>::const_iterator materialIdx = _renderMap.begin();
-		idx3d k = 0;
-		for (std::list<mesh>::const_iterator i = _mesh.begin(); i != _mesh.end();)
-		{
-			if (materialIdx != _renderMap.end())
-			{
-				if (k == (*materialIdx).startIndex)
-				{
-					(*materialIdx).material->setup();
-					materialIdx++;
-				}
-			}
+	  // default material setup
+	  glBindTexture(GL_TEXTURE_2D, 0);
 
-			//glBegin(GL_LINE_STRIP);
-			for (unsigned char j = 0; j < 3 && i != _mesh.end(); j++)
-			{
-				//glColor3dv(color[j]);
-				glVertex3dv(&i->vertex.x);
-				glNormal3dv(&i->normal.x);
-				glTexCoord2dv(&i->texture.x);
-				i++;
-			}
-			//glEnd();
-			k++;
+	  glPushMatrix();
+	  setModelview();
+	  glBegin(GL_TRIANGLES);
+	  std::list<materialAssoc>::const_iterator materialIdx = _renderMap.begin();
+	  idx3d k = 0;
+	  for (std::list<mesh>::const_iterator i = _mesh.begin(); i != _mesh.end();)
+	    {
+	      if (materialIdx != _renderMap.end())
+		{
+		  if (k == (*materialIdx).startIndex)
+		    {
+		      (*materialIdx).material->setup();
+		      materialIdx++;
+		    }
 		}
-		glEnd();
-		glPopMatrix();
+	      
+	      //glBegin(GL_LINE_STRIP);
+	      for (unsigned char j = 0; j < 3 && i != _mesh.end(); j++)
+		{
+		  //glColor3dv(color[j]);
+		  glVertex3dv(&i->vertex.x);
+		  //glNormal3dv(&i->normal.x);
+		  glTexCoord2dv(&i->texture.x);
+		  i++;
+		}
+	      //glEnd();
+	      k++;
+	    }
+	  glEnd();
+	  glPopMatrix();
 	}
 
 	void	model::setModelview()

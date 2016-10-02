@@ -79,19 +79,16 @@ namespace jmax
 	  i++;
 	  return NULL;
 	}
-	std::cout << "Triangle: " << result->_mesh.size() / 3 << std::endl;
-	/*std::cout
-	  << "Vertex: " << result->mesh.nbVertex << std::endl
-	  << "Normal: " << result->mesh.nbNormal << std::endl
-	  << "TextureCord: " << result->mesh.nbTextureCord << std::endl
-	  << "Primitive: " << result->mesh.nbPrimitive << std::endl
+	std::cout
+	  << "Primitive: " << result->_mesh.size() / 3 << std::endl
+	  << "Materials: " << result->_material.size() << std::endl
+	  << "Rendering operation: " << result->_renderMap.size() << std::endl;
+	  /*
 	  << "Size: " <<
-	  (sizeof(mesh) +
-	  result->mesh.nbVertex * sizeof(vec3) +
-	  result->mesh.nbNormal * sizeof(vec3) +
-	  result->mesh.nbTextureCord * sizeof(vec2) +
-	  result->mesh.nbPrimitive * sizeof(idx3d)) / 1000
-	  << "Ko" << std::endl;*/
+	  (sizeof(jmax::mesh)
+	   + result->_mesh.size() * sizeof(jmax::model::mesh))
+	  + result->_material.size() * 
+	  / 1000 << "Ko" << std::endl;*/
 	return result;
       }
     else

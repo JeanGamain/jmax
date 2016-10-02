@@ -134,7 +134,7 @@ namespace jmax
 					std::cerr << "Missing material " << line << std::endl;
 					return;
 				}
-				newModel->_renderMap.push_back(model::materialAssoc{ (unsigned int)newModel->_mesh.size(), &(i->second) });
+				newModel->_renderMap.push_back(model::materialAssoc{ (unsigned int)newModel->_mesh.size() + 1, &(i->second) });
 			}
 			},
 			{ "mtllib",
